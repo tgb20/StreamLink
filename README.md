@@ -11,11 +11,12 @@ Documentation for the serverside implementation of Link, a MIT AppInventor Exten
 
 ## Links
 
-Links are stored in volatile memory of the server and only contain the UUID of the device that created it, its code, and its password.
+Links are stored in volatile memory of the server and only contain the UUID of the device that created it, its code, last message time, and its password.
 ```
 var Link = function(uuid, password, code) {
 	this.uuid = uuid
 	this.password = password
+	this.lastmessage = new Date().getTime()
 	this.linkcode = generateLinkCode(code)
 }
 ```
