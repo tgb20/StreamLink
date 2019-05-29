@@ -1,57 +1,73 @@
 # Link
 
-Documentation for the serverside implementation of Link, a MIT AppInventor Extension designed to allow for video and data transfer between devices across networks.
+Documentation for the serverside implementation of Link, a MIT App Inventor Extension designed to allow for video and data transfer between devices across networks.
 
 
 ## Quick Info
-- All devices recieve all messages
 - Data is currently *NOT* encrypted
 - Passwords are currently in *plaintext*
 - Communication between devices and server is handled by [socket.io](https://socket.io/)
 
 ## Links
 
-Links are stored in volatile memory of the server and only contain the UUID of the device that created it, its code, last message time, and its password.
+Links are stored in volatile memory of the server do save any message information.
 ```
-var Link = function(uuid, password, code) {
-	this.uuid = uuid
+var Link = function(id, password) {
+	this.id = id
 	this.password = password
 	this.lastmessage = new Date().getTime()
-	this.linkcode = generateLinkCode(code)
+	this.linkcode = generateLinkCode()
+	this.devices = []
 }
 ```
 
 Link codes are 4 alphanumeric characters unique *only* within a server and are filtered to not contain any inappropriate terms.
 
-Future supports for reserving links is planned, as of now links are active for 24 hours after thier last message or until the owner requests a new code.
+Future supports for reserving links is planned, as of now links are active for 24 hours after thier last message.
 
 ## Emissions
 *Link version of a HTTP Request*
 
 ### Make a new Link
-To make a link you must send a request. Only one link can be active per device, so if a device sends a request for a new link while an old one is still active, the old link will be deleted.
+To make a link you must send a request. Only one link can be active per device, so if a device sends a request for a new link while an old one is still active, the old link will be used instead of making a new link.
 
 Emit `createlink`
 
-`device_uuid` is the uuid of the device requesting to make a link
+`device_id` is the id of the device requesting to make a link
 
 `link_password` is the password that should be applied to this link
-
-`code_pref` is the preferred link code you would like to use
 ```
 {
 	“device_uuid”: “”,
-	“link_password”: “”,
-	“code_pref”: “”
+	“link_password”: “”
 }
 ```
 
-### Send a message
+### Join a link
 To send a message to a link you must send a request containing all information needed by the recieving clients to know if the message pertains to them.
+
+Emit `joinlink`
+
+`device_id` is the id of the device requesting to join the link
+
+`link_code` is the uuid of the device requesting to join the link
+
+`link_password` is the password that should be applied to this link
+```
+{
+	“device_id”: “”,
+	“link_code“: “”,
+	“link_password”: “”
+}
+```
+
+
+### Send a message
+To send a message to a link you must send a request.
 
 Emit `sendmessage`
 
-`device_uuid` is the uuid of the device sending the message
+`device_id` is the uuid of the device sending the message
 
 `link_code` is the link code for the link to send the message to
 
@@ -63,7 +79,7 @@ Emit `sendmessage`
 
 ```
 {
-	“device_uuid”: “”,
+	“device_id”: “”,
 	“link_code”: “”,
 	“link_password”: “”,
 	“type”: “”,
@@ -79,32 +95,29 @@ When a link is created this event is emitted from the server. It can be ignored 
 
 On `linkcreated`
 
-`device_uuid` is the uuid of the device that requested to make this link
+`device_id` is the uuid of the device that requested to make this link
 
-`link_code` is the link code for this link, or NaN if it failed
+`link_code` is the link code for this link, or “null” if it failed
 ```
 {
-	“device_uuid”: “”,	
+	“device_id”: “”,	
 	“link_code”: “”
 }
 ```
 
 ### When a message is recieved
-When a message is sent to the server this event is emitted. Devices should ignore the message if it is not directed to them. In the future will be encrypted so the link password is required to read them.
+When a message is sent to the server this event is emitted to all devices attached ti the link.
 
 On `newmessage`
 
-`link_code` is the link code for the link in which this message belongs to
-
-`device_uuid` is the uuid of the device that send the message
+`device_id` is the id of the device that send the message
 
 `type` is type of data the message is (currently only string)
 
 `message` is the content of the message
 ```
 {
-	”link_code”: “”,
-	“device_uuid”: “”,
+	“device_id”: “”,
 	“type“: “”	
 	“message”: object
 }
