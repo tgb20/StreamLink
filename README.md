@@ -1,6 +1,6 @@
-# Link
+# StreamLink
 
-Documentation for the serverside implementation of Link, a MIT App Inventor Extension designed to allow for video and data transfer between devices across networks.
+Documentation for the serverside implementation of StreamLink, a MIT App Inventor Extension designed to allow for video and data transfer between devices across networks.
 
 
 ## Quick Info
@@ -26,7 +26,7 @@ Link codes are 4 alphanumeric characters unique *only* within a server and are f
 Future supports for reserving links is planned, as of now links are active for 24 hours after thier last message.
 
 ## Emissions
-*Link version of a HTTP Request*
+*StreamLink version of a HTTP Request*
 
 ### Make a new Link
 To make a link you must send a request. Only one link can be active per device, so if a device sends a request for a new link while an old one is still active, the old link will be used instead of making a new link.
@@ -88,7 +88,7 @@ Emit `sendmessage`
 ```
 
 ## Events
-*Link version of a HTTP return, but all devices subscribe to all events*
+*StreamLink version of a HTTP return, but all devices subscribe to all events*
 
 ### When a link is created
 When a link is created this event is emitted from the server. It can be ignored by any device, but the one that requested it.
