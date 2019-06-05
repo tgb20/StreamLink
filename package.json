@@ -1,0 +1,25 @@
+{
+  "name": "streamlink",
+  "version": "1.0.0",
+  "description": "Documentation for the serverside implementation of StreamLink, a MIT App Inventor Extension designed to allow for video and data transfer between devices across networks.",
+  "main": "app.js",
+  "scripts": {
+    "start": "nodemon app",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tgb20/Link.git"
+  },
+  "author": "Jacob Bashista",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tgb20/Link/issues"
+  },
+  "homepage": "https://github.com/tgb20/Link#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "nodemon": "^1.19.1",
+    "socket.io": "^2.2.0"
+  }
+}

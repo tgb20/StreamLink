@@ -1,0 +1,17 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Testing Link Codes</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        var socket = io();
+        socket.emit('createlink', JSON.stringify({device_id: 0, link_password: "password"}))
+        socket.on('linkcreated', (data) => {
+          jsonParse = JSON.parse(data)
+          let device_id = jsonParse.device_id
+          let link_code = jsonParse.link_code
+          console.log(link_code)
+        })
+    </script>
+  </head>
+</html>
