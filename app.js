@@ -1,6 +1,7 @@
-let app = require('express')()
-let http = require('http').createServer(app)
-let io = require('socket.io')(http)
+const app = require('express')()
+const http = require('http').createServer(app)
+const io = require('socket.io')(http)
+const bcrypt = require('bcrypt')
 let Link = require('./Link')
 
 
@@ -22,6 +23,7 @@ io.on('connection', (socket) => {
         let device_id = jsonParse.device_id
         let link_password = jsonParse.link_password
 
+        let hashed_password = bcrypt.hashSync(link_password, 10)
 
         var deviceRegistered = false
         var registeredLink
@@ -39,7 +41,7 @@ io.on('connection', (socket) => {
             socket.emit('linkcreated', JSON.stringify({device_id: registeredLink.owner_id, link_code: registeredLink.link_code}))
             socket.join(registeredLink.link_code)
         }else{
-            let link = new Link(device_id, link_password)
+            let link = new Link(device_id, hashed_password)
             link.generateLinkCode()
             links.push(link)
 
@@ -55,6 +57,9 @@ io.on('connection', (socket) => {
         let link_code = jsonParse.link_code
         let link_password = jsonParse.link_password
 
+
+        let hashed_password = bcrypt.hashSync(link_password, 10)
+
         var foundLink = null
 
         links.forEach( (item, index, array) => {
@@ -66,9 +71,11 @@ io.on('connection', (socket) => {
         if(foundLink == null){
             // Fail
             socket.emit('linkjoined', JSON.stringify({device_id: device_id, link_code: link_code, success: false}))
-        }else if(foundLink.link_password != link_password){
+            console.log("No Link Found!")
+        }else if(hashed_password == foundLink.link_password){
             // Fail
             socket.emit('linkjoined', JSON.stringify({device_id: device_id, link_code: link_code, success: false}))
+            console.log("Invalid Passowrd!")
         }else{
             // Success
             socket.emit('linkjoined', JSON.stringify({device_id: device_id, link_code: link_code, success: true}))
