@@ -48,7 +48,7 @@ io.on('connection', (socket) => {
             socket.emit('linkcreated', JSON.stringify({device_id: link.owner_id, link_code: link.link_code}))
             socket.join(link.link_code)
         }
-
+        console.log("Link Created")
     })
 
     socket.on('joinlink', (data) => {
@@ -81,7 +81,19 @@ io.on('connection', (socket) => {
             socket.emit('linkjoined', JSON.stringify({device_id: device_id, link_code: link_code, success: true}))
             socket.join(foundLink.link_code)
         }
+        console.log("Link Joined")
     })
+
+    socket.on('message', (data) => {
+        let jsonParse = JSON.parse(data)
+
+        let link_code = jsonParse.link_code
+
+        io.to(link_code).emit('newmessage', data)
+
+        console.log("Message Sent")
+    })
+
 })
 
 http.listen(3000, () => {
