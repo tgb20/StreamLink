@@ -90,8 +90,6 @@ io.on('connection', (socket) => {
         let link_code = jsonParse.link_code
 
         io.to(link_code).emit('newmessage', data)
-
-        console.log("Message Sent")
     })
 
 })
