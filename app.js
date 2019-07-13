@@ -22,6 +22,7 @@ io.on('connection', (socket) => {
         let jsonParse = JSON.parse(data)
         let device_id = jsonParse.device_id
         let link_password = jsonParse.link_password
+        let link_description = jsonParse.link_description
 
         let hashed_password = bcrypt.hashSync(link_password, 10)
 
@@ -38,14 +39,14 @@ io.on('connection', (socket) => {
 
 
         if(deviceRegistered){
-            socket.emit('linkcreated', JSON.stringify({device_id: registeredLink.owner_id, link_code: registeredLink.link_code}))
+            socket.emit('linkcreated', JSON.stringify({device_id: registeredLink.owner_id, link_code: registeredLink.link_code, link_description: registeredLink.link_description}))
             socket.join(registeredLink.link_code)
         }else{
-            let link = new Link(device_id, hashed_password)
+            let link = new Link(device_id, hashed_password, link_description)
             link.generateLinkCode()
             links.push(link)
 
-            socket.emit('linkcreated', JSON.stringify({device_id: link.owner_id, link_code: link.link_code}))
+            socket.emit('linkcreated', JSON.stringify({device_id: link.owner_id, link_code: link.link_code, link_description: link.link_description}))
             socket.join(link.link_code)
         }
         console.log("Link Created")
@@ -78,7 +79,7 @@ io.on('connection', (socket) => {
             console.log("Invalid Passowrd!")
         }else{
             // Success
-            socket.emit('linkjoined', JSON.stringify({device_id: device_id, link_code: link_code, success: true}))
+            socket.emit('linkjoined', JSON.stringify({device_id: device_id, link_code: link_code, success: true, link_description: foundLink.link_description}))
             socket.join(foundLink.link_code)
         }
         console.log("Link Joined")
