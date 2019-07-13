@@ -2,6 +2,7 @@ const app = require('express')()
 const http = require('http').createServer(app)
 const io = require('socket.io')(http)
 const bcrypt = require('bcrypt')
+var cron = require('node-cron');
 let Link = require('./Link')
 
 
@@ -90,10 +91,38 @@ io.on('connection', (socket) => {
 
         let link_code = jsonParse.link_code
 
+        links.forEach( (item, index, array) => {
+            if(item.link_code == link_code){
+                item.updateLastMessage()
+            }
+        })
+
         io.to(link_code).emit('newmessage', data)
     })
 
 })
+
+
+cron.schedule('* * */23 * * *', () => {
+
+    console.log('Wiping old links');
+
+    var deadLinks = 0
+
+    var currentTime = new Date().getTime()
+
+    links.forEach( (item, index, array) => {
+        
+        if(currentTime - item.last_message > 86400000){
+            links.splice(index, 1)
+            deadLinks += 1
+        }
+    })
+
+    console.log("Deleted " + deadLinks.toString() + " links")
+
+});
+
 
 http.listen(3000, () => {
     console.log('listening on *:3000')

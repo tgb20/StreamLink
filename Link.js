@@ -15,6 +15,10 @@ class Link {
         this.link_code = code
     }
 
+    updateLastMessage(){
+        this.last_message = new Date().getTime()
+    }
+
 }
 
 
