@@ -19,7 +19,7 @@
   "homepage": "https://github.com/tgb20/Link#readme",
   "dependencies": {
     "bcrypt": "^5.0.0",
-    "express": "^4.17.1",
+    "express": "^4.18.2",
     "node-cron": "^2.0.3",
     "nodemon": "^1.19.1",
     "socket.io": "^2.4.0"
